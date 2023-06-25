@@ -20,13 +20,13 @@ int hash_payload(const CryptoPP::byte *payload, size_t payload_size, CryptoPP::b
      for (size_t i = 0; i < SHA256::DIGESTSIZE; ++i) {
          cout << hex << setw(2) << setfill('0') << static_cast<unsigned int>(digest[i]);
      }
-     cout << endl;
+    cout << endl << endl;
 
     return 0;
 
 }
 
-void verify_frame(const canfd_frame& frame) {
+bool verify_frame(const canfd_frame& frame) {
     int message_len = frame.len - SHA256::DIGESTSIZE;
     CryptoPP::byte message[message_len];
     memcpy(message, &frame.data, message_len);
@@ -42,11 +42,11 @@ void verify_frame(const canfd_frame& frame) {
     bool isMessageValid = (memcmp(receivedDigest, calculatedDigest, SHA256::DIGESTSIZE) == 0);
 
     if (isMessageValid) {
-        cout << "Received message is valid." << endl;
-        // Additional processing or actions can be performed here
+        cout << "[+] received message valid" << endl;
+        return true;
     } else {
-        cout << "Received message is invalid." << endl;
-        // Additional handling for invalid messages can be added here
+        cout << "[-] received message invalid" << endl;
+        return false;
     }
 }
 
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
     }
 
     if (strcmp(argv[1], "-s") == 0) {
-        cout << "acting as sender" << endl;
+        cout << "[>] acting as sender" << endl << endl;
         CryptoPP::byte message[] = {
                 0x66,0x6f,0x6c,0x6c,0x6f,0x77,0x20,0x74,
                 0x68,0x65,0x20,0x77,0x68,0x69,0x74,0x65,
@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
         sender.printFrame(frame);
     }
     else if (strcmp(argv[1], "-r") == 0) {
-        cout << "acting as receiver" << endl;
+        cout << "[>] acting as receiver" << endl << endl;
         canfd_frame frame;
         memset(&frame, 0, sizeof(frame));
 
@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
         verify_frame(frame);
     }
     else {
-        cout << "the parameter is invalid!" << endl;
+        cout << "[!] the parameter is invalid!" << endl;
         print_usage();
         return 1;
     }

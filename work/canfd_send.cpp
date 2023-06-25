@@ -50,7 +50,7 @@ bool CANFDSender::sendFrame(const canfd_frame &frame) {
 }
 
 void CANFDSender::printFrame(const canfd_frame &frame) {
-    cout << "Sending CAN FD frame" << endl; 
+    cout << "[>] sending CAN FD frame" << endl; 
     cout << "\t- ID: 0x" << hex << frame.can_id << endl;
     cout << "\t- Data: ";
     for (int i = 0; i < frame.len; ++i) {

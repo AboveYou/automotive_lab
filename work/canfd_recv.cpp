@@ -51,7 +51,7 @@ bool CANFDReceiver::receiveFrame(canfd_frame &frame) {
 }
 
 void CANFDReceiver::printFrame(const canfd_frame &frame) {
-    cout << "Received CAN FD frame" << endl; 
+    cout << "[>] received CAN FD frame" << endl; 
     cout << "\t- ID: 0x" << hex << frame.can_id << endl;
     cout << "\t- Data: ";
     for (int i = 0; i < frame.len; ++i) {

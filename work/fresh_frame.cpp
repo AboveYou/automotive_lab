@@ -23,17 +23,17 @@ int fresh_hmac_payload(const CryptoPP::byte *key, size_t key_size,
     hmac.Final(digest);
 
     // display the HMAC
-    cout << "HMAC: ";
+    cout << "HMAC (with freshness): ";
     for (size_t i = 0; i < HMAC<SHA256>::DIGESTSIZE; ++i) {
         cout << hex << setw(2) << setfill('0') << static_cast<unsigned int>(digest[i]);
     }
-    cout << endl;
+    cout << endl << endl;
 
     return 0;
 }
 
-void verify_frame(const CryptoPP::byte *key,
-                  const CryptoPP::byte *counter,
+bool verify_frame(const CryptoPP::byte *key, size_t key_size,
+                  const CryptoPP::byte *counter, size_t counter_size,
                   const canfd_frame& frame) {
     int message_len = frame.len - 1 - HMAC<SHA256>::DIGESTSIZE;
     CryptoPP::byte message[message_len];
@@ -54,15 +54,21 @@ void verify_frame(const CryptoPP::byte *key,
 
     // Compare the calculated digest with the received digest
     bool isMessageValid = (memcmp(receivedDigest, calculatedDigest, HMAC<SHA256>::DIGESTSIZE) == 0);
-    bool isCounterValid = (memcmp(receivedCounter, counter, 1) == 0);
-
-    if (isMessageValid && isCounterValid) {
-        cout << "Received message is valid." << endl;
-        // Additional processing or actions can be performed here
-    } else {
-        cout << "Received message is invalid." << endl;
-        // Additional handling for invalid messages can be added here
+    if (isMessageValid) {
+        cout << "[+] counter valid" << endl;
     }
+
+    bool isCounterValid = (memcmp(receivedCounter, counter, 1) == 0);
+    if (isCounterValid) {
+        cout << "[+] counter valid" << endl;
+    }
+
+    if (!isMessageValid || !isCounterValid) {
+        cout << "[-] received message invalid" << endl;
+        return false;
+    }
+
+    return true;
 }
 
 void print_usage() {
@@ -85,7 +91,7 @@ int main(int argc, char **argv) {
     };
 
     if (strcmp(argv[1], "-s") == 0) {
-        cout << "acting as sender" << endl;
+        cout << "[>] acting as sender" << endl << endl;
         CryptoPP::byte message[] = {
             0x64,0x6f,0x20,0x6e,0x6f,0x74,0x20,0x74,
             0x61,0x6c,0x6b,0x20,0x61,0x62,0x6f,0x75,
@@ -114,7 +120,7 @@ int main(int argc, char **argv) {
         sender.printFrame(frame);
     }
     else if (strcmp(argv[1], "-r") == 0) {
-        cout << "acting as receiver" << endl;
+        cout << "[>] acting as receiver" << endl << endl;
         canfd_frame frame;
         memset(&frame, 0, sizeof(frame));
 
@@ -124,7 +130,7 @@ int main(int argc, char **argv) {
         verify_frame(key, sizeof(key), counter, sizeof(counter), frame);
     }
     else {
-        cout << "the parameter is invalid!" << endl;
+        cout << "[!] the parameter is invalid!" << endl;
         print_usage();
         return 1;
     }
