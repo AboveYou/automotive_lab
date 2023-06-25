@@ -12,10 +12,10 @@
 using namespace CryptoPP;
 using namespace std;
 
-int fresh_hmac_payload(const CryptoPP::byte *key, const size_t key_size,
-                       const CryptoPP::byte *payload, const size_t payload_size,
-                       const CryptoPP::byte *counter, const size_t counter_size,
-                       CryptoPP::byte *digest) {
+int fresh_payload(const CryptoPP::byte *key, const size_t key_size,
+                  const CryptoPP::byte *payload, const size_t payload_size,
+                  const CryptoPP::byte *counter, const size_t counter_size,
+                  CryptoPP::byte *digest) {
     HMAC<SHA256> hmac(key, key_size);
 
     hmac.Update(payload, payload_size);
@@ -46,7 +46,7 @@ bool verify_frame(const CryptoPP::byte *key, const size_t key_size,
     memcpy(receivedDigest, frame.data + message_len + 1, HMAC<SHA256>::DIGESTSIZE);
 
     CryptoPP::byte calculatedDigest[HMAC<SHA256>::DIGESTSIZE];
-    fresh_hmac_payload(key, key_size,
+    fresh_payload(key, key_size,
                        message, message_len,
                        receivedCounter, counter_size,
                        calculatedDigest);
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
 
         CryptoPP::byte digest[HMAC<SHA256>::DIGESTSIZE];
 
-        fresh_hmac_payload(key, sizeof(key),
+        fresh_payload(key, sizeof(key),
                            message, sizeof(message),
                            counter, sizeof(counter),
                            digest);

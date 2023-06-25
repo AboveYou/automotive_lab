@@ -12,10 +12,10 @@
 using namespace CryptoPP;
 using namespace std;
 
-int fresh_hmac_payload(const CryptoPP::byte *key, const size_t key_size,
-                       const CryptoPP::byte *payload, const size_t payload_size,
-                       const CryptoPP::byte *counter, const size_t counter_size,
-                       CryptoPP::byte *digest) {
+int fresh_payload(const CryptoPP::byte *key, const size_t key_size,
+                  const CryptoPP::byte *payload, const size_t payload_size,
+                  const CryptoPP::byte *counter, const size_t counter_size,
+                  CryptoPP::byte *digest) {
 
     // TODO insert code here
 
