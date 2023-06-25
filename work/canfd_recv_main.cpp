@@ -1,16 +1,11 @@
 #include "canfd_recv.h"
 
-int main(int argc, char **argv) {
-    CANFDReceiver recv("vcan0");
-    
+int main() {
     canfd_frame frame;
-    
     // prepare the CAN-FD frame
     memset(&frame, 0, sizeof(frame));
-    
-    if (recv.receiveFrame(frame)) {
-        recv.printFrame(frame);
-    };
+
+    // TODO insert code here
 
 	return 0;
 }

@@ -1,10 +1,7 @@
 #include "canfd_send.h"
 
 int main() {
-    CANFDSender sender("vcan0");
-
     canfd_frame frame;
-
     // prepare the CAN-FD frame
     memset(&frame, 0, sizeof(frame));
 
@@ -22,9 +19,7 @@ int main() {
     frame.data[6] = 0x76;
     frame.data[7] = 0x54;
 
-    if (sender.sendFrame(frame)) {
-        sender.printFrame(frame);
-    };
+    // TODO insert code here
     
     return 0;
 }
