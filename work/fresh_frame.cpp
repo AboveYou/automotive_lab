@@ -32,8 +32,8 @@ int fresh_hmac_payload(const CryptoPP::byte *key, size_t key_size,
     return 0;
 }
 
-void verify_frame(const CryptoPP::byte *key, size_t key_size,
-                  const CryptoPP::byte *counter, size_t counter_size,
+void verify_frame(const CryptoPP::byte *key,
+                  const CryptoPP::byte *counter,
                   const canfd_frame& frame) {
     int message_len = frame.len - 1 - HMAC<SHA256>::DIGESTSIZE;
     CryptoPP::byte message[message_len];

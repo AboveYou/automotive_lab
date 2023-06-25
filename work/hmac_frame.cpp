@@ -11,10 +11,12 @@
 using namespace CryptoPP;
 using namespace std;
 
-int hmac_payload(CryptoPP::byte *key, CryptoPP::byte *payload, CryptoPP::byte *digest) {
-    HMAC<SHA256> hmac(key, sizeof(key));
+int hmac_payload(const CryptoPP::byte *key, size_t key_size,
+                 CryptoPP::byte *payload, size_t payload_size,
+                 CryptoPP::byte *digest) {
+    HMAC<SHA256> hmac(key, key_size);
     
-    hmac.Update(payload, sizeof(payload));
+    hmac.Update(payload, payload_size);
     hmac.Final(digest);
 
     // display the HMAC
@@ -27,7 +29,7 @@ int hmac_payload(CryptoPP::byte *key, CryptoPP::byte *payload, CryptoPP::byte *d
     return 0;
 }
 
-void verify_frame(CryptoPP::byte *key, const canfd_frame& frame) {
+void verify_frame(const CryptoPP::byte *key, size_t key_size, const canfd_frame& frame) {
     int message_len = frame.len - HMAC<SHA256>::DIGESTSIZE;
     CryptoPP::byte message[message_len];
     memcpy(message, &frame.data, message_len);
@@ -37,7 +39,7 @@ void verify_frame(CryptoPP::byte *key, const canfd_frame& frame) {
 
     // Verify the received message by hashing it and comparing the hash with the received hash
     CryptoPP::byte calculatedDigest[HMAC<SHA256>::DIGESTSIZE];
-    hmac_payload(key, message, calculatedDigest);
+    hmac_payload(key, key_size, message, message_len, calculatedDigest);
 
     // Compare the calculated digest with the received digest
     bool isMessageValid = (memcmp(receivedDigest, calculatedDigest, HMAC<SHA256>::DIGESTSIZE) == 0);
@@ -77,7 +79,7 @@ int main(int argc, char **argv) {
 
         CryptoPP::byte digest[HMAC<SHA256>::DIGESTSIZE];
 
-        hmac_payload(key, message, digest);
+        hmac_payload(key, sizeof(key), message, sizeof(message), digest);
 
         canfd_frame frame;
         memset(&frame, 0, sizeof(frame));
@@ -99,7 +101,7 @@ int main(int argc, char **argv) {
         CANFDReceiver receiver("vcan0");
 
         receiver.receiveFrame(frame);
-        verify_frame(key, frame);
+        verify_frame(key, sizeof(key), frame);
     }
     else {
         cout << "the parameter is invalid!" << endl;

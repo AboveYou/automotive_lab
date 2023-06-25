@@ -8,11 +8,11 @@
 using namespace std;
 using namespace CryptoPP;
 
-int hash_payload(const CryptoPP::byte *payload, CryptoPP::byte *digest) {
+int hash_payload(const CryptoPP::byte *payload, size_t payload_size, CryptoPP::byte *digest) {
     // hashing using SHA-256
     SHA256 hash;
 
-    hash.Update(payload, sizeof(payload));
+    hash.Update(payload, payload_size);
     hash.Final(digest);
 
      // Display the hash result
@@ -36,7 +36,7 @@ void verify_frame(const canfd_frame& frame) {
 
     // Verify the received message by hashing it and comparing the hash with the received hash
     CryptoPP::byte calculatedDigest[SHA256::DIGESTSIZE];
-    hash_payload(message, calculatedDigest);
+    hash_payload(message, message_len, calculatedDigest);
 
     // Compare the calculated digest with the received digest
     bool isMessageValid = (memcmp(receivedDigest, calculatedDigest, SHA256::DIGESTSIZE) == 0);
@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
 
         CryptoPP::byte digest[SHA256::DIGESTSIZE];
 
-        hash_payload(message, digest);
+        hash_payload(message, sizeof(message), digest);
 
         canfd_frame frame;
         memset(&frame, 0, sizeof(frame));
@@ -92,7 +92,6 @@ int main(int argc, char **argv) {
         CANFDReceiver receiver("vcan0");
 
         // Simulating the receiving side
-        // receiver.receiveFrame(frame);
         receiver.receiveFrame(frame);
         verify_frame(frame);
     }
