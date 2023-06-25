@@ -6,8 +6,6 @@ all: canfd crypto hash hmac code
 
 canfd: canfd_recv canfd_send
 
-hash: hash_in hash_out
-
 hmac: hmac_in hmac_out
 
 fresh: fresh_in fresh_out
@@ -21,10 +19,7 @@ canfd_recv: canfd_recv.cpp canfd_recv_main.cpp
 crypto: crypto_intro.cpp
 	$(CXX) $(CXXFLAGS) $^ -o $@.out $(LDFLAGS)
 
-hash_in: canfd_recv.cpp hash_frame_in.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $@.out $(LDFLAGS)
-
-hash_out: canfd_send.cpp hash_frame_out.cpp
+hash: canfd_recv.cpp canfd_send.cpp hash_frame.cpp
 	$(CXX) $(CXXFLAGS) $^ -o $@.out $(LDFLAGS)
 
 hmac_out: canfd_send.cpp hmac_frame_out.cpp
