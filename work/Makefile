@@ -2,11 +2,9 @@ CXX = g++
 CXXFLAGS = -I /usr/include/cryptopp 
 LDFLAGS = -L /urs/include/cryptopp -l cryptopp
 
-all: canfd crypto hash hmac code
+all: canfd crypto hash hmac fresh
 
 canfd: canfd_recv canfd_send
-
-fresh: fresh_in fresh_out
 
 canfd_send: canfd_send.cpp canfd_send_main.cpp
 	$(CXX) $(CXXFLAGS) $^ -o $@.out $(LDFLAGS)
@@ -23,10 +21,7 @@ hash: canfd_recv.cpp canfd_send.cpp hash_frame.cpp
 hmac: canfd_recv.cpp canfd_send.cpp hmac_frame.cpp
 	$(CXX) $(CXXFLAGS) $^ -o $@.out $(LDFLAGS)
 
-fresh_out: canfd_send.cpp fresh_frame_out.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $@.out $(LDFLAGS)
-
-fresh_in: canfd_recv.cpp fresh_frame_in.cpp
+fresh: canfd_recv.cpp canfd_send.cpp fresh_frame.cpp
 	$(CXX) $(CXXFLAGS) $^ -o $@.out $(LDFLAGS)
 
 clean:
