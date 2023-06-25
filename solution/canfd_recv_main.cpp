@@ -1,6 +1,6 @@
 #include "canfd_recv.h"
 
-int main(int argc, char **argv) {
+int main() {
     CANFDReceiver recv("vcan0");
     
     canfd_frame frame;

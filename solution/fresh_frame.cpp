@@ -12,9 +12,9 @@
 using namespace CryptoPP;
 using namespace std;
 
-int fresh_hmac_payload(const CryptoPP::byte *key, size_t key_size,
-                       const CryptoPP::byte *payload, size_t payload_size,
-                       const CryptoPP::byte *counter, size_t counter_size,
+int fresh_hmac_payload(const CryptoPP::byte *key, const size_t key_size,
+                       const CryptoPP::byte *payload, const size_t payload_size,
+                       const CryptoPP::byte *counter, const size_t counter_size,
                        CryptoPP::byte *digest) {
     HMAC<SHA256> hmac(key, key_size);
 
@@ -32,8 +32,8 @@ int fresh_hmac_payload(const CryptoPP::byte *key, size_t key_size,
     return 0;
 }
 
-bool verify_frame(const CryptoPP::byte *key, size_t key_size,
-                  const CryptoPP::byte *counter, size_t counter_size,
+bool verify_frame(const CryptoPP::byte *key, const size_t key_size,
+                  const CryptoPP::byte *counter, const size_t counter_size,
                   const canfd_frame& frame) {
     int message_len = frame.len - 1 - HMAC<SHA256>::DIGESTSIZE;
     CryptoPP::byte message[message_len];
@@ -88,6 +88,9 @@ int main(int argc, char **argv) {
         0x01, 0x02, 0x03, 0x04,
     };
 
+    canfd_frame frame;
+    memset(&frame, 0, sizeof(frame));
+
     if (strcmp(argv[1], "-s") == 0) {
         cout << "[>] acting as sender" << endl << endl;
         CryptoPP::byte message[] = {
@@ -104,8 +107,6 @@ int main(int argc, char **argv) {
                            counter, sizeof(counter),
                            digest);
 
-        canfd_frame frame;
-        memset(&frame, 0, sizeof(frame));
         frame.can_id = 0x7334;
         frame.len = sizeof(message) + 1 + HMAC<SHA256>::DIGESTSIZE;
         memcpy(frame.data, message, sizeof(message));
@@ -119,8 +120,6 @@ int main(int argc, char **argv) {
     }
     else if (strcmp(argv[1], "-r") == 0) {
         cout << "[>] acting as receiver" << endl << endl;
-        canfd_frame frame;
-        memset(&frame, 0, sizeof(frame));
 
         CANFDReceiver receiver("vcan0");
 

@@ -8,7 +8,7 @@
 using namespace std;
 using namespace CryptoPP;
 
-int hash_payload(const CryptoPP::byte *payload, size_t payload_size, CryptoPP::byte *digest) {
+int hash_payload(const CryptoPP::byte *payload, const size_t payload_size, CryptoPP::byte *digest) {
     // hashing using SHA-256
     SHA256 hash;
 
@@ -58,6 +58,9 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    canfd_frame frame;
+    memset(&frame, 0, sizeof(frame));
+
     if (strcmp(argv[1], "-s") == 0) {
         cout << "[>] acting as sender" << endl << endl;
         CryptoPP::byte message[] = {
@@ -70,8 +73,6 @@ int main(int argc, char **argv) {
 
         hash_payload(message, sizeof(message), digest);
 
-        canfd_frame frame;
-        memset(&frame, 0, sizeof(frame));
         frame.can_id = 0x7334;
         frame.len = sizeof(message) + SHA256::DIGESTSIZE;
         memcpy(frame.data, message, sizeof(message));
@@ -84,8 +85,6 @@ int main(int argc, char **argv) {
     }
     else if (strcmp(argv[1], "-r") == 0) {
         cout << "[>] acting as receiver" << endl << endl;
-        canfd_frame frame;
-        memset(&frame, 0, sizeof(frame));
 
         CANFDReceiver receiver("vcan0");
 
