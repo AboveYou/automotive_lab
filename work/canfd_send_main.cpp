@@ -12,15 +12,15 @@ int main() {
     frame.len = 8;
     memset(frame.data, 0, sizeof(frame.data));
 
-    // Set the payload data
-    frame.data[0] = 0x11;
-    frame.data[1] = 0x22;
-    frame.data[2] = 0x33;
-    frame.data[3] = 0x44;
-    frame.data[4] = 0x55;
-    frame.data[5] = 0x66;
-    frame.data[6] = 0x77;
-    frame.data[7] = 0x88;
+    // set the payload data
+    frame.data[0] = 0x12;
+    frame.data[1] = 0x34;
+    frame.data[2] = 0x56;
+    frame.data[3] = 0x78;
+    frame.data[4] = 0x90;
+    frame.data[5] = 0x98;
+    frame.data[6] = 0x76;
+    frame.data[7] = 0x54;
 
     if (sender.sendFrame(frame)) {
         sender.printFrame(frame);

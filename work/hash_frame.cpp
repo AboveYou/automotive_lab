@@ -15,7 +15,7 @@ int hash_payload(const CryptoPP::byte *payload, size_t payload_size, CryptoPP::b
     hash.Update(payload, payload_size);
     hash.Final(digest);
 
-     // Display the hash result
+     // display the hash result
      cout << "Hash: ";
      for (size_t i = 0; i < SHA256::DIGESTSIZE; ++i) {
          cout << hex << setw(2) << setfill('0') << static_cast<unsigned int>(digest[i]);
@@ -34,11 +34,9 @@ bool verify_frame(const canfd_frame& frame) {
     CryptoPP::byte receivedDigest[SHA256::DIGESTSIZE];
     memcpy(receivedDigest, frame.data + message_len, SHA256::DIGESTSIZE);
 
-    // Verify the received message by hashing it and comparing the hash with the received hash
     CryptoPP::byte calculatedDigest[SHA256::DIGESTSIZE];
     hash_payload(message, message_len, calculatedDigest);
 
-    // Compare the calculated digest with the received digest
     bool isMessageValid = (memcmp(receivedDigest, calculatedDigest, SHA256::DIGESTSIZE) == 0);
 
     if (isMessageValid) {
@@ -91,7 +89,6 @@ int main(int argc, char **argv) {
 
         CANFDReceiver receiver("vcan0");
 
-        // Simulating the receiving side
         receiver.receiveFrame(frame);
         verify_frame(frame);
     }

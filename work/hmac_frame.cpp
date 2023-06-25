@@ -37,11 +37,9 @@ bool verify_frame(const CryptoPP::byte *key, size_t key_size, const canfd_frame&
     CryptoPP::byte receivedDigest[HMAC<SHA256>::DIGESTSIZE];
     memcpy(receivedDigest, frame.data + message_len, HMAC<SHA256>::DIGESTSIZE);
 
-    // Verify the received message by hashing it and comparing the hash with the received hash
     CryptoPP::byte calculatedDigest[HMAC<SHA256>::DIGESTSIZE];
     hmac_payload(key, key_size, message, message_len, calculatedDigest);
 
-    // Compare the calculated digest with the received digest
     bool isMessageValid = (memcmp(receivedDigest, calculatedDigest, HMAC<SHA256>::DIGESTSIZE) == 0);
 
     if (isMessageValid) {

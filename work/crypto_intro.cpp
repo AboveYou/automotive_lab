@@ -1,11 +1,3 @@
-/**
- * In this file you will get a quaick introduction into the crypto library of C++.
- * We need several aspects of this library throuougt this lab.
- * 
- * - hashing (SHA256)
- * - symmetric keys (AES)
- * - hash messag authentication codes (HMACs)
-*/
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -30,33 +22,41 @@ void hashingTest() {
     hash.Final(digest);
 
     // display the hash
-    cout << "SHA-256 Hash: ";
-    for (size_t i = 0; i < SHA256::DIGESTSIZE; ++i) {
-        cout << hex << setw(2) << setfill('0') << static_cast<unsigned int>(digest[i]);
-    }
-    cout << endl;
+    string hexString;
+    StringSource(digest, sizeof(digest), true,
+                 new HexEncoder(
+                         new StringSink(hexString)
+                 )
+    );
+    cout << "Hash: " << hexString << endl;
 }
 
 void hmacTest() {
+    // the key which will be used
     CryptoPP::byte key[] = {0x01, 0x02, 0x03, 0x04};
     size_t keySize = sizeof(key);
 
-    CryptoPP::byte data[] = {0x61, 0x62, 0x63, 0x64}; // ASCII values of "abcd"
+    // the data to create a hmac
+    CryptoPP::byte data[] = {0x61, 0x62, 0x63, 0x64};
     size_t dataSize = sizeof(data);
 
     CryptoPP::byte digest[HMAC<SHA256>::DIGESTSIZE];
 
+    // create an object & introduce the key
     HMAC<SHA256> hmac(key, keySize);
+    // introduce the array to the class
+
     hmac.Update(data, dataSize);
+    // calculate the hmac
     hmac.Final(digest);
 
+    // display the hmac
     string hexString;
     StringSource(digest, sizeof(digest), true,
         new HexEncoder(
             new StringSink(hexString)
         )
     );
-
     cout << "HMAC: " << hexString << endl;
 }
 
