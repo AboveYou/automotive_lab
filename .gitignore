@@ -2,3 +2,4 @@
 /.idea/
 /CMakeFiles/
 *.out
+*.tgz
