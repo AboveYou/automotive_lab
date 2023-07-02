@@ -53,7 +53,7 @@ bool verify_frame(const CryptoPP::byte *key, const size_t key_size,
 
     bool isMessageValid = (memcmp(receivedDigest, calculatedDigest, HMAC<SHA256>::DIGESTSIZE) == 0);
     if (isMessageValid) {
-        cout << "[+] counter valid" << endl;
+        cout << "[+] message valid" << endl;
     }
 
     bool isCounterValid = (memcmp(receivedCounter, counter, 1) == 0);

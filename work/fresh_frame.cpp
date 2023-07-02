@@ -39,7 +39,7 @@ bool verify_frame(const CryptoPP::byte *key, const size_t key_size,
     // TODO inset code here
 
     if (isMessageValid) {
-        cout << "[+] counter valid" << endl;
+        cout << "[+] message valid" << endl;
     }
 
     if (isCounterValid) {
